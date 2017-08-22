@@ -23,5 +23,5 @@ mdp = r''  # mot de passe youtube
 # Load chrome extensions
 chop = webdriver.ChromeOptions()
 chop.add_argument(
-    'load-extension={0}'.format(r'')
+    'load-extension={0}'.format(path_adblock)
 )

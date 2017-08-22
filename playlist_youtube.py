@@ -127,8 +127,7 @@ while 1 > 0:
                 #
                 # ##########################################
                 name_pytube = yt.filename
-                yt.get('3gp', '240p').download(
-                    'D:\\Python\\Playlist_youtube\\Playliste')
+                yt.get('3gp', '240p').download(path_dl)
                 path = path_dl + "\\"
                 extension_in = '.3gp'
                 extension_out = '.mp3'
@@ -137,7 +136,7 @@ while 1 > 0:
                     outputs={path + name_pytube + extension_out: None}
                 )
                 ff.run()  # lancement de ffmpeg
-                os.remove(path + name + extension_in)
+                os.remove(path + name_pytube + extension_in)
                 wr = csv.writer(f, dialect='excel')
 
                 # on écrit le dernier élément de la liste: l'élément [-1].
