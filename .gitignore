@@ -56,3 +56,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+*.sublime-project
+
+*.sublime-workspace
+
+playlist_youtube_ju\.py
