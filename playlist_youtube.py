@@ -93,26 +93,10 @@ while 1 > 0:
     else:
         if driver.current_url != ancient_url:                                     # si la page a changé de vidéo
             ancient_url = driver.current_url
-            name = driver.title
-
-            # suppression des (xx) des notifications
-            if str('0123456789').find(name[1]) != -1:
-                if str('0123456789').find(name[2]) != -1:
-                    name = name[5:len(driver.title) - 10]
-                else:
-                    name = name[4:len(driver.title) - 10]
-            else:  # on enleve les premiers caractère car c'est ecrit Google chrome-
-                name = name[0:len(driver.title) - 10]
-            # on arrive donc au nom tel qu'il est dans la base de donnée : le nom de la vidéo tel qu'il est sur youtube (avec tous les caractères spéciaux)
-            for musique in liste_musique:
-                if musique == name:  # si on retrouve la musique alors on leve le drapeau et on sort
-                    flag = 1
-            if flag == 0:  # si on trouve pas la musique
-                liste_musique.append(name)  # on l'ajoue àa la liste
-                yt_url = driver.current_url  # on recupère l'url de téléchargement
-                # on entre l'url dans pytube pour recupérer les infos de la vidéo
-                yt = pytube.YouTube(yt_url)
-#                name=name.replace('|','')                                # on retire toutes les merdes qui font sauter la conversion car nom pytube =/= nom chromedriver
+            yt_url = driver.current_url  # on recupère l'url de téléchargement
+            # on entre l'url dans pytube pour recupérer les infos de la vidéo
+            yt = pytube.YouTube(yt_url)
+#                name=name.replace('|','')                                # on retire toutes les merdes qui font sauter le csv
 #                name=name.replace('/','')
 #                name=name.replace('\\','')
 #                name=name.replace('ü','u')
@@ -120,29 +104,29 @@ while 1 > 0:
 #                name=name.replace('ö','o')
 #                name=name.replace('ø','o')
 #                name=name.replace('?','')
+            name = yt.filename
+            liste_musique.append(name)  # on l'ajoue àa la liste
+            # ##########################################
+            #
+            #          FILE DOWNLOAD AND CONVERT
+            #
+            # ##########################################
+            yt.get('3gp', '240p').download(path_dl)
+            path = path_dl + "\\"
+            extension_in = '.3gp'
+            extension_out = '.mp3'
+            ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
+                inputs={path + name + extension_in: None},
+                outputs={path + name + extension_out: None}
+            )
+            ff.run()  # lancement de ffmpeg
+            os.remove(path + name + extension_in)
+            wr = csv.writer(f, dialect='excel')
 
-                # ##########################################
-                #
-                #          FILE DOWNLOAD AND CONVERT
-                #
-                # ##########################################
-                name_pytube = yt.filename
-                yt.get('3gp', '240p').download(path_dl)
-                path = path_dl + "\\"
-                extension_in = '.3gp'
-                extension_out = '.mp3'
-                ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
-                    inputs={path + name_pytube + extension_in: None},
-                    outputs={path + name_pytube + extension_out: None}
-                )
-                ff.run()  # lancement de ffmpeg
-                os.remove(path + name_pytube + extension_in)
-                wr = csv.writer(f, dialect='excel')
-
-                # on écrit le dernier élément de la liste: l'élément [-1].
-                # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
-                # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
-                wr.writerow([liste_musique[-1]])
-                f.flush()
+            # on écrit le dernier élément de la liste: l'élément [-1].
+            # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
+            # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
+            wr.writerow([liste_musique[-1]])
+            f.flush()
     time.sleep(5)
     flag = 0
