@@ -1,12 +1,14 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Created on Wed May 31 10:21:32 2017
 
-@author: practicas1
+# ##########################################
+#
+# Author : Pyrau
+# Github repository : https://github.com/Pyrau/Projet-Python-Youtube
+# License : ???
+#
+# ##########################################
 
-C'est le fichier git
-
-"""
 
 from selenium import webdriver                          # Selenium est la librairie qui contrôle webdriver
 import pytube                                           # la librairie de gestion de youtube que j'utilise
@@ -22,23 +24,7 @@ from selenium.webdriver.chrome.options import Options   # librairie de gestion d
 #           CONFIGURATION, SET UP
 #
 # ##########################################
-
-# Put each files with full path
-# TO TRY : Relative path?
-path_BDD = ''
-path_new_BDD = ''
-# path_adblock = r''
-path_chromedriver = r''
-path_dl = r''
-ndc = ""  # nom de  compte youtube
-mdp = ""  # mot de passe youtube
-
-# Load chrome extensions
-chop = webdriver.ChromeOptions()
-chop.add_argument(
-    'load-extension={0}'.format(r'C:\Users\pierr\AppData\Local\Google\Chrome\User Data\Default\Extensions\gighmmpiobklfepjocnamgkkbiglidom\3.15.0_0')
-)
-
+from config import *                                    # Config import
 
 # ##########################################
 #
@@ -124,7 +110,6 @@ while 1 > 0:
             if flag == 0:  # si on trouve pas la musique
                 liste_musique.append(name)  # on l'ajoue àa la liste
                 yt_url = driver.current_url  # on recupère l'url de téléchargement
-#                yt_url=yt_url.replace('watch?v','v/')
                 # on entre l'url dans pytube pour recupérer les infos de la vidéo
                 yt = pytube.YouTube(yt_url)
 #                name=name.replace('|','')                                # on retire toutes les merdes qui font sauter la conversion car nom pytube =/= nom chromedriver

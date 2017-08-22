@@ -62,3 +62,5 @@ target/
 *.sublime-workspace
 
 playlist_youtube_ju\.py
+
+config\.py
