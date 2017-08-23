@@ -88,9 +88,13 @@ while 1 > 0:
             ancient_url = driver.current_url
             yt_url = driver.current_url
             yt = pytube.YouTube(yt_url)
-
             name = yt.filename
-            print(name)
+            for musique in liste_musique:
+                if musique==name:
+                    print("musique :",name, "dans la BDD")
+                    flag=1         
+            if flag==0:
+            print("musique :",name, "PAS dans la BDD")
             liste_musique.append([name])  # on l'ajoue à la liste
             
             # ##########################################
