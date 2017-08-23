@@ -64,3 +64,7 @@ target/
 playlist_youtube_ju\.py
 
 config\.py
+
+*.csv
+
+\.vscode/

@@ -37,14 +37,10 @@ if os.path.isfile(path_BDD):
     f = open(path_BDD, 'r+', newline='')
     reader = csv.reader(f, dialect='excel')
     liste_musique = list(reader)
-    indice = 0  # il n'y a pas de for normal dans python, on doit s'en sortir avec des tricks comme ca. indice c'est l'indice d'un for normal
-    # recuperation de la longueur de la liste des musiques
     num_items = len(liste_musique)
-    while indice < num_items:   # tant qu'on est pas arrivé au bout de la liste on continue
-        # on modifie chaque élément de la liste car lors de la lecture en csv, le lecteur ajoute des caractères
+    for indice in range(0, num_items):
         liste_musique[indice] = str(liste_musique[indice])[
             2:len(liste_musique[indice]) - 3]
-        indice = indice + 1  # on incrémente après modification
 
 else:
     liste_musique = []
