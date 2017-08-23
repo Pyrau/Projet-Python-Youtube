@@ -91,38 +91,38 @@ while 1 > 0:
             name = yt.filename
             for musique in liste_musique:
                 if musique==name:
-                    print("musique :",name, "dans la BDD")
+                    print("musique :" + name + "dans la BDD")
                     flag=1         
             if flag==0:
-            print("musique :",name, "PAS dans la BDD")
-            liste_musique.append([name])  # on l'ajoue à la liste
-            
-            # ##########################################
-            #
-            #          FILE DOWNLOAD AND CONVERT
-            #
-            # ##########################################
-
-            print("Téléchargement vidéo en cours")
-            yt.get('3gp', '240p').download(path_dl)
-            print("Téléchargement vidéo terminé")
-            extension_in = '.3gp'
-            extension_out = '.mp3'
-            ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
-                inputs={path_dl + name + extension_in: None},
-                outputs={path_dl + name + extension_out: None}
-            )
-            print("Convertissement en musique en cours")
-            ff.run()  # lancement de ffmpeg
-            print("Convertissement Terminé")
-            os.remove(path_dl + name + extension_in)
-            wr = csv.writer(f, dialect='excel')
-
-            # on écrit le dernier élément de la liste: l'élément [-1].
-            # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
-            # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
-            wr.writerow(liste_musique[-1])
-            print("Musique ajouté dans la BDD")
-            f.flush()
+                print("musique :" + name + "PAS dans la BDD")
+                liste_musique.append([name])  # on l'ajoue à la liste
+                
+                # ##########################################
+                #
+                #          FILE DOWNLOAD AND CONVERT
+                #
+                # ##########################################
+    
+                print("Téléchargement vidéo en cours")
+                yt.get('3gp', '240p').download(path_dl)
+                print("Téléchargement vidéo terminé")
+                extension_in = '.3gp'
+                extension_out = '.mp3'
+                ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
+                    inputs={path_dl + name + extension_in: None},
+                    outputs={path_dl + name + extension_out: None}
+                )
+                print("Convertissement en musique en cours")
+                ff.run()  # lancement de ffmpeg
+                print("Convertissement Terminé")
+                os.remove(path_dl + name + extension_in)
+                wr = csv.writer(f, dialect='excel')
+    
+                # on écrit le dernier élément de la liste: l'élément [-1].
+                # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
+                # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
+                wr.writerow(liste_musique[-1])
+                print("Musique ajouté dans la BDD")
+                f.flush()
     time.sleep(5)
     flag = 0
