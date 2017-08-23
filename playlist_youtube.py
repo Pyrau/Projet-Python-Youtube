@@ -32,11 +32,7 @@ from config import *                                    # Config import
 #
 # ##########################################
 
-# Ask if database exists.
-# TODO : CHeck automatically
-rep = input('Avez-vous une base de donnée? O/N').lower()
-
-if rep == 'o':
+if os.path.isfile(path_BDD):
     # r+ = read + write
     f = open(path_BDD, 'r+', newline='')
     reader = csv.reader(f, dialect='excel')
@@ -62,7 +58,7 @@ else:
 
 url_yt = 'https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252F%26feature%3Dsign_in_button%26app%3Ddesktop%26hl%3Des%26action_handle_signin%3Dtrue&hl=es&uilel=3&service=youtube'
 
-driver = webdriver.Chrome(path_chromedriver, chrome_options=chop)
+driver = webdriver.Chrome(path_chromedriver)
 driver.get(url_yt)
 time.sleep(1)
 handles = driver.window_handles                                     # il me semble que c'est la gestion des onglets
