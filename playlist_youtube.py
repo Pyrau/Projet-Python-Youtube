@@ -37,10 +37,10 @@ if os.path.isfile(path_BDD):
     f = open(path_BDD, 'r+', newline='')
     reader = csv.reader(f, dialect='excel')
     liste_musique = list(reader)
-    num_items = len(liste_musique)
-    for indice in range(0, num_items):
-        liste_musique[indice] = str(liste_musique[indice])[
-            2:len(liste_musique[indice]) - 3]
+    # num_items = len(liste_musique)
+    # for indice in range(0, num_items):
+    #     liste_musique[indice] = str(liste_musique[indice])[
+    #         2:len(liste_musique[indice]) - 3]
 
 else:
     liste_musique = []
@@ -86,33 +86,27 @@ while 1 > 0:
     else:
         if driver.current_url != ancient_url:                                     # si la page a changé de vidéo
             ancient_url = driver.current_url
-            yt_url = driver.current_url  # on recupère l'url de téléchargement
-            # on entre l'url dans pytube pour recupérer les infos de la vidéo
+            yt_url = driver.current_url
             yt = pytube.YouTube(yt_url)
-#                name=name.replace('|','')                                # on retire toutes les merdes qui font sauter le csv
-#                name=name.replace('/','')
-#                name=name.replace('\\','')
-#                name=name.replace('ü','u')
-#                name=name.replace('ï','i')
-#                name=name.replace('ö','o')
-#                name=name.replace('ø','o')
-#                name=name.replace('?','')
+
             name = yt.filename
-            liste_musique.append(name)  # on l'ajoue àa la liste
+            print(name)
+            liste_musique.append([name])  # on l'ajoue à la liste
+            
             # ##########################################
             #
             #          FILE DOWNLOAD AND CONVERT
             #
             # ##########################################
+
             print("Téléchargement vidéo en cours")
             yt.get('3gp', '240p').download(path_dl)
             print("Téléchargement vidéo terminé")
-            path = path_dl
             extension_in = '.3gp'
             extension_out = '.mp3'
             ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
-                inputs={path + name + extension_in: None},
-                outputs={path + name + extension_out: None}
+                inputs={path_dl + name + extension_in: None},
+                outputs={path_dl + name + extension_out: None}
             )
             print("Convertissement en musique en cours")
             ff.run()  # lancement de ffmpeg
@@ -123,7 +117,7 @@ while 1 > 0:
             # on écrit le dernier élément de la liste: l'élément [-1].
             # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
             # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
-            wr.writerow([liste_musique[-1]])
+            wr.writerow(liste_musique[-1])
             print("Musique ajouté dans la BDD")
             f.flush()
     time.sleep(5)
