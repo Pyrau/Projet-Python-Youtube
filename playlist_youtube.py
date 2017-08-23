@@ -54,6 +54,7 @@ else:
 
 url_yt = 'https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252F%26feature%3Dsign_in_button%26app%3Ddesktop%26hl%3Des%26action_handle_signin%3Dtrue&hl=es&uilel=3&service=youtube'
 
+# driver = webdriver.Chrome(path_chromedriver, chrome_options=chop)
 driver = webdriver.Chrome(path_chromedriver)
 driver.get(url_yt)
 time.sleep(1)
