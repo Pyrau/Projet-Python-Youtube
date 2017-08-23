@@ -106,7 +106,7 @@ while 1 > 0:
             print("Téléchargement vidéo en cours")
             yt.get('3gp', '240p').download(path_dl)
             print("Téléchargement vidéo terminé")
-            path = path_dl + "\\"
+            path = path_dl
             extension_in = '.3gp'
             extension_out = '.mp3'
             ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
