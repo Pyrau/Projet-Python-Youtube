@@ -111,7 +111,7 @@ while 1 > 0:
             print("Convertissement en musique en cours")
             ff.run()  # lancement de ffmpeg
             print("Convertissement Terminé")
-            os.remove(path + name + extension_in)
+            os.remove(path_dl + name + extension_in)
             wr = csv.writer(f, dialect='excel')
 
             # on écrit le dernier élément de la liste: l'élément [-1].
