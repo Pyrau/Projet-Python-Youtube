@@ -68,3 +68,5 @@ config\.py
 *.csv
 
 \.vscode/
+
+musique/

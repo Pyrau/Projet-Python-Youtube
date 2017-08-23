@@ -103,7 +103,9 @@ while 1 > 0:
             #          FILE DOWNLOAD AND CONVERT
             #
             # ##########################################
+            print("Téléchargement vidéo en cours")
             yt.get('3gp', '240p').download(path_dl)
+            print("Téléchargement vidéo terminé")
             path = path_dl + "\\"
             extension_in = '.3gp'
             extension_out = '.mp3'
@@ -111,7 +113,9 @@ while 1 > 0:
                 inputs={path + name + extension_in: None},
                 outputs={path + name + extension_out: None}
             )
+            print("Convertissement en musique en cours")
             ff.run()  # lancement de ffmpeg
+            print("Convertissement Terminé")
             os.remove(path + name + extension_in)
             wr = csv.writer(f, dialect='excel')
 
@@ -119,6 +123,7 @@ while 1 > 0:
             # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
             # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
             wr.writerow([liste_musique[-1]])
+            print("Musique ajouté dans la BDD")
             f.flush()
     time.sleep(5)
     flag = 0
