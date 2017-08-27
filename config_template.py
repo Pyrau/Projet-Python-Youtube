@@ -13,7 +13,6 @@
 from selenium import webdriver
 
 path_BDD = r''
-path_new_BDD = r''
 path_adblock = r''
 path_chromedriver = r''
 path_dl = r''
