@@ -51,10 +51,7 @@ def check_new_url(yt_url, driver):
     """
     Function to check the change of any chrome URL and update it
     """
-    print("in check_new_url")
     if driver.current_url != yt_url:
-        print(driver.current_url)
-        print(yt_url)
         yt_url = driver.current_url
         youtube_object = pytube.YouTube(yt_url)
         name = youtube_object.filename
@@ -65,7 +62,6 @@ def convert(path_dl, name):
     """
     Convert videos and extract music then delete video file
     """
-    print("in convert")
     extension_in = '.3gp'
     extension_out = '.mp3'
     ffmpy_options = ffmpy.FFmpeg(
@@ -82,7 +78,6 @@ def check_existence(liste_musique, name):
     """
     Check if tthe video is already in the database and raise a flag to download new video or not
     """
-    print("in check_existence")
     flag = False
     for musique in liste_musique:
         if musique[0] == name:
