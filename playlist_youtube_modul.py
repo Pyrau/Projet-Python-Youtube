@@ -128,7 +128,7 @@ def main():
     driver = run_connect_chrome(url_connect)
 
     yt_url = 'o'
-    while False:
+    while True:
         try:
             pytube.YouTube(driver.current_url).get_videos()
         except:
@@ -139,13 +139,13 @@ def main():
             if flag is False:
                 liste_musique = download(liste_musique, name, config.path_dl, youtube_object)
                 convert(config.path_dl, name)
-                wr = csv.writer(database_file, dialect='excel')
+                writer_file = csv.writer(database_file, dialect='excel')
 
-                wr.writerow(liste_musique[-1])
+                writer_file.writerow(liste_musique[-1])
                 print("Musique ajouté dans la BDD")
                 database_file.flush()
                 time.sleep(5)
     return
 
-
-main()
+if __name__ == '__main__':
+    main()
