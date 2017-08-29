@@ -127,6 +127,13 @@ def convert(path_dl, name):
     print("Convertissement Terminé")
     os.remove(path_dl + name + extension_in)
 
+def write_into_db(database_file, liste_musique):
+    writer_file = csv.writer(database_file, dialect='excel')
+    writer_file.writerow(liste_musique[-1])
+    print("Musique ajouté dans la BDD")
+    database_file.flush()
+    time.sleep(5)
+
 
 def main():
     """
@@ -148,12 +155,7 @@ def main():
             if flag is False:
                 liste_musique = download(liste_musique, name, config.path_dl, youtube_object)
                 convert(config.path_dl, name)
-                writer_file = csv.writer(database_file, dialect='excel')
-
-                writer_file.writerow(liste_musique[-1])
-                print("Musique ajouté dans la BDD")
-                database_file.flush()
-                time.sleep(5)
+                write_into_db(database_file, liste_musique)
     return
 
 if __name__ == '__main__':
