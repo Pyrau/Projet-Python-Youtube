@@ -1,121 +1,160 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# ##########################################
+""" ##########################################
 #
 # Author : Pyrau
 # Github repository : https://github.com/Pyrau/Projet-Python-Youtube
 # License : ???
 #
-# ##########################################
+########################################## """
 
-from selenium import webdriver
-import pytube
-import ffmpy
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import time
 import csv
-from selenium.webdriver.chrome.options import Options
+import pytube
+import ffmpy
+import config
+from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
 
-# ##########################################
-#
-#           CONFIGURATION, SET UP
-#
-# ##########################################
-from config import *
 
-# ##########################################
-#
-#               Database reading
-#
-# ##########################################
+def check_account():
+    """This function check if you have inputed your account"""
+    flag_account = 0
+    url_connect = 'https://www.youtube.com/'
+    if config.ndc != '':
+        flag_account = 1
+        url_connect = 'https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252F%26feature%3Dsign_in_button%26app%3Ddesktop%26hl%3Des%26action_handle_signin%3Dtrue&hl=es&uilel=3&service=youtube'
+    return flag_account, url_connect
 
-if os.path.isfile(path_BDD):
-    f = open(path_BDD, 'r+', newline='')
-    reader = csv.reader(f, dialect='excel')
-    liste_musique = list(reader)
 
-else:
-    liste_musique = []
-    f = open(path_new_BDD, 'w', newline='')
+def run_chrome(url_yt):
+    """
+    Connection to run Chrome
+    """
+    # driver = webdriver.Chrome(path_chromedriver, chrome_options=chop)
+    driver = webdriver.Chrome(config.path_chromedriver)
+    driver.get(url_yt)
+    time.sleep(1)
+    print("Connected to Google Chrome")
+    return driver
 
-# ##########################################
-#
-#               YT CONNECTION
-#
-# ##########################################
 
-url_yt = 'https://accounts.google.com/ServiceLogin?passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Fnext%3D%252F%26feature%3Dsign_in_button%26app%3Ddesktop%26hl%3Des%26action_handle_signin%3Dtrue&hl=es&uilel=3&service=youtube'
+def connect_to_chrome(driver, flag_account):
+    """This function connect to your account that you have setup"""
+    if flag_account:
+        handles = driver.window_handles
+        driver.switch_to_window(handles[0])
+        element = driver.find_element_by_css_selector(
+            '.whsOnd.zHQkBf')     # Field : Account name
+        element.send_keys(config.ndc)
+        element = driver.find_element_by_css_selector(
+            '.RveJvd.snByac')                                               # Button : Next
+        element.click()
+        time.sleep(3)
+        element = driver.find_element_by_css_selector(
+            '.whsOnd.zHQkBf')     # Field : Password
+        element.send_keys(config.mdp)
+        element = driver.find_element_by_css_selector(
+            '.RveJvd.snByac')                                               # Field : Next
+        element.click()
+        print("Connected to your account")
 
-# driver = webdriver.Chrome(path_chromedriver, chrome_options=chop)
-driver = webdriver.Chrome(path_chromedriver)
-driver.get(url_yt)
-time.sleep(1)
-handles = driver.window_handles
-driver.switch_to_window(handles[0])
-element = driver.find_element_by_css_selector(
-    '.whsOnd.zHQkBf')     # Field : Account name
-element.send_keys(ndc)
-element = driver.find_element_by_css_selector(
-    '.RveJvd.snByac')                                               # Button : Next
-element.click()
-time.sleep(3)
-element = driver.find_element_by_css_selector(
-    '.whsOnd.zHQkBf')     # Field : Password
-element.send_keys(mdp)
-element = driver.find_element_by_css_selector(
-    '.RveJvd.snByac')                                               # Field : Next
-element.click()
 
-ancient_url = 'o'
+def database_setup(path_db):
+    """
+    Setup new or existing database
+    """
+    if os.path.isfile(path_db):
+        database_file = open(path_db, 'r+', newline='')
+        reader = csv.reader(database_file, dialect='excel')
+        liste_musique = list(reader)
 
-while 1 > 0:
-    try:
-        pytube.YouTube(driver.current_url).get_videos()
-    except:
-        time.sleep(1)
     else:
-        if driver.current_url != ancient_url:
-            ancient_url = driver.current_url
-            yt_url = driver.current_url
-            yt = pytube.YouTube(yt_url)
-            name = yt.filename
+        liste_musique = []
+        database_file = open(path_db, 'w', newline='')
+    return liste_musique, database_file
 
-            flag = 0
-            for musique in liste_musique:
-                if musique[0] == name:
-                    print("musique :" + name + "dans la BDD")
-                    flag = 1
-            if flag == 0:
-                print("musique :" + name + "PAS dans la BDD")
-                liste_musique.append([name])
 
-                # ##########################################
-                #
-                #          FILE DOWNLOAD AND CONVERT
-                #
-                # ##########################################
+def check_new_url(yt_url, driver):
+    """
+    Function to check the change of any chrome URL and update it
+    """
+    if driver.current_url != yt_url:
+        yt_url = driver.current_url
+        youtube_object = pytube.YouTube(yt_url)
+        name = youtube_object.filename
+    return name, youtube_object
 
-                print("Téléchargement vidéo en cours")
-                yt.get('3gp', '240p').download(path_dl)
-                print("Téléchargement vidéo terminé")
-                extension_in = '.3gp'
-                extension_out = '.mp3'
-                ff = ffmpy.FFmpeg(  # paramétrage de ffmpeg
-                    inputs={path_dl + name + extension_in: None},
-                    outputs={path_dl + name + extension_out: None}
-                )
-                print("Convertissement en musique en cours")
-                ff.run()
-                print("Convertissement Terminé")
-                os.remove(path_dl + name + extension_in)
-                wr = csv.writer(f, dialect='excel')
 
-                # on écrit le dernier élément de la liste: l'élément [-1].
-                # A SAVOIR!! le rédacteur écrit sur la ligne i avec i numéro de l'élément dans la liste.
-                # Si je veux juste ajouter un élément en derniere ligne sans l'entrer comme élément i de ma liste, je ne sais pas faire
-                wr.writerow(liste_musique[-1])
+def check_existence(liste_musique, name):
+    """
+    Check if tthe video is already in the database and raise a flag to download new video or not
+    """
+    flag = False
+    for musique in liste_musique:
+        if musique[0] == name:
+            print("musique :" + name + "dans la BDD")
+            flag = True
+    return flag
+
+
+def download(liste_musique, name, path_dl, youtube_object):
+    """
+    Download video
+    """
+    print("musique :" + name + "PAS dans la BDD")
+    liste_musique.append([name])
+
+    print("Téléchargement vidéo en cours")
+    youtube_object.get('3gp', '240p').download(path_dl)
+    print("Téléchargement vidéo terminé")
+    return liste_musique
+
+def convert(path_dl, name):
+    """
+    Convert videos and extract music then delete video file
+    """
+    extension_in = '.3gp'
+    extension_out = '.mp3'
+    ffmpy_options = ffmpy.FFmpeg(
+        inputs={path_dl + name + extension_in: None},
+        outputs={path_dl + name + extension_out: None}
+    )
+    print("Convertissement en musique en cours")
+    ffmpy_options.run()
+    print("Convertissement Terminé")
+    os.remove(path_dl + name + extension_in)
+
+
+def main():
+    """
+    Main function
+    """
+    (liste_musique, database_file) = database_setup(config.path_db)
+    (flag_account, url_connect) = check_account()
+    driver = run_chrome(url_connect)
+    connect_to_chrome(driver, flag_account)
+    yt_url = 'o'
+    while True:
+        try:
+            pytube.YouTube(driver.current_url).get_videos()
+        except:
+            time.sleep(1)
+        else:
+            (name, youtube_object) = check_new_url(yt_url, driver)
+            flag = check_existence(liste_musique, name)
+            if flag is False:
+                liste_musique = download(liste_musique, name, config.path_dl, youtube_object)
+                convert(config.path_dl, name)
+                writer_file = csv.writer(database_file, dialect='excel')
+
+                writer_file.writerow(liste_musique[-1])
                 print("Musique ajouté dans la BDD")
-                f.flush()
-    time.sleep(5)
-    flag = 0
+                database_file.flush()
+                time.sleep(5)
+    return
+
+if __name__ == '__main__':
+    main()
